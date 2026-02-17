@@ -45,7 +45,7 @@ export const signup = async (req: Request, res: Response) => {
                 avatar: newUser.avatar,
             })
         } else {
-            return res.status(400).json({ message: "Invalid user data" })
+            res.status(400).json({ message: "Invalid user data" })
         }
 
     } catch (error) {
@@ -56,6 +56,10 @@ export const signup = async (req: Request, res: Response) => {
 
 export const login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
+
+    if (!email || !password) {
+        return res.status(400).json({ message: "Email and Password are required." })
+    }
 
     try {
         const user = await User.findOne({ email })
@@ -84,13 +88,12 @@ export const login = async (req: Request, res: Response) => {
 }
 
 export const logout = (_: Request, res: Response) => {
-    res.cookie("jwt", "",
-        {
-            httpOnly: true,
-            expires: new Date(0), // An alternative to maxAge: 0
-            // sameSite: "strict",
-            secure: process.env.NODE_ENV !== "development"
-        }
-    );
+    const cookieOptions = {
+        httpOnly: true,
+        // sameSite: "strict",
+        secure: process.env.NODE_ENV !== "development"
+    }
+
+    res.clearCookie("jwt", cookieOptions);
     res.status(200).json({ message: "Logged out successfully" })
 }

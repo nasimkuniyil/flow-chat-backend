@@ -14,7 +14,14 @@ app.use(express.json()); //req.body
 app.use('/api/auth', authRoutes);
 app.use('/api/messages ', messageRoutes);
 
-app.listen(PORT, ()=> {
-    console.log('server started at '+PORT);
-    connectDB();
-});
+connectDB()
+    .then(() => app.listen(PORT, () => console.log('server started at ' + PORT)))
+    .catch((error) => {
+        console.error('Failed to connect mongodb : ', error);
+        process.exit(1);
+    })
+
+// app.listen(PORT, () => {
+//     console.log('server started at ' + PORT);
+//     connectDB();
+// });

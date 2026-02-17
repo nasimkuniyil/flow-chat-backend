@@ -24,4 +24,3 @@ Flow Chat is a high-performance, real-time communication platform built with the
 - **Server**: Node.js & Express.js
 - **Database**: MongoDB (with Mongoose)
 - **Communication**: Socket.io
-- **Email Service**: Resend

@@ -1,5 +1,5 @@
 import { Model, Document } from "mongoose";
-import { IBaseRepo } from "../interfaces/IBaseRepo";
+import { IBaseRepo } from "../interfaces/repo.types";
 
 export default class BaseRepo<T extends Document> implements IBaseRepo<T>{
 

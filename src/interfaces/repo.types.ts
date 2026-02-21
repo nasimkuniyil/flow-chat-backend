@@ -1,3 +1,6 @@
+import { Document } from "mongoose";
+import { IUser } from "./model.types";
+
 export interface IBaseRepo<T>{
     create(data:Partial<T>):Promise<T>;
     findAll():Promise<T[]>;
@@ -5,4 +8,8 @@ export interface IBaseRepo<T>{
     findByQuery(query:object):Promise<T[]>;
     updateById(id:string, newData:Partial<T>):Promise<T | null>;
     deleteById(id:string):Promise<T | null>;
+}
+
+export interface IUserRepo extends IBaseRepo<IUser>{
+
 }

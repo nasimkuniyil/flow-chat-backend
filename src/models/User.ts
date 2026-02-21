@@ -1,12 +1,5 @@
-import { model, Mongoose, Schema } from "mongoose";
-
-export interface IUser extends Mongoose {
-    email: string;
-    fullName: string;
-    password: string;
-    avatar: string;
-    x: string;
-}
+import { model, Schema } from "mongoose";
+import { IUser } from "../interfaces/IUser";
 
 const userSchema = new Schema<IUser>(
     {

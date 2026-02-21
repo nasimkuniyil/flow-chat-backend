@@ -1,9 +1,9 @@
 import { Model, Document } from "mongoose";
-import { IBaseRepo } from "../interfaces/repo.types";
+import { IBaseRepo } from "../interfaces/repositories/IBaseRepo";
 
 export default class BaseRepo<T extends Document> implements IBaseRepo<T>{
 
-    constructor(private model:Model<T>){}
+    constructor(protected model:Model<T>){}
 
     async create(data:Partial<T>): Promise<T> {
         const newDocument = await this.model.create(data);
@@ -18,7 +18,7 @@ export default class BaseRepo<T extends Document> implements IBaseRepo<T>{
         return await this.model.findById(id);
     }
 
-    async findByQuery(query:object): Promise<T[]> {
+    async findByQuery(query:Partial<T>): Promise<T[]> {
         return await this.model.find(query);
     }
 

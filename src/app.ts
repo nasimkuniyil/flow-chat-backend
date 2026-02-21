@@ -1,9 +1,9 @@
 import 'dotenv/config';
 import express from 'express';
 
-import authRoutes from './routes/auth.route'
-import messageRoutes from './routes/message.route'
-import { connectDB } from './lib/db';
+import authRoutes from './modules/auth/auth.route'
+import messageRoutes from './modules/message/message.route'
+import { connectDB } from './config/db';
 
 const app = express();
 

@@ -10,28 +10,34 @@ export default class AuthService implements IAuthService {
 
     async register(data: Partial<IUser>): Promise<{ user: Partial<IUser>, token: string }> {
 
-        const { fullName, email, password } = data;
+        const fullName = data.fullName?.trim();
+        const email = data.email?.trim();
+        const password = data.password?.trim();
 
         if (!fullName || !email || !password) {
-            // return res.status(400).json({ message: "All fields are required" })
-            throw new Error("All fields are required")
+            const err: any = new Error("All fields are required");
+            err.status = 400;
+            throw err;
         }
 
         if (password.length < 6) {
-            // return res.status(400).json({ message: "Password must be at least 6 characters" })
-            throw new Error("Password must be at least 6 characters")
+            const err: any = new Error("Password must be at least 6 characters")
+            err.status = 400;
+            throw err;
         }
 
         const emailPattern = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
         if (!emailPattern.test(email)) {
-            // return res.status(400).json({ message: "Invalid email" })
-            throw new Error("Invalid email")
+            const err: any = new Error("Invalid email")
+            err.status = 400;
+            throw err;
         }
 
         const user = await this.userRepo.findByEmail(email);
         if (user) {
-            // return res.status(400).json({ message: "Email already exists" })
-            throw new Error("Email already exists")
+            const err: any = new Error("Email already exists")
+            err.status = 400;
+            throw err;
         }
 
         const salt = await bcrypt.genSalt(10);
@@ -46,13 +52,6 @@ export default class AuthService implements IAuthService {
         if (newUser) {
             const token = generateToken(newUser._id);
 
-            // res.status(201).json({
-            //     _id: newUser._id,
-            //     fullName: newUser.fullName,
-            //     email: newUser.email,
-            //     avatar: newUser.avatar,
-            // })
-
             const userData = {
                 _id: newUser._id,
                 fullName: newUser.fullName,
@@ -62,25 +61,35 @@ export default class AuthService implements IAuthService {
 
             return { user: userData, token }
         } else {
-            // res.status(400).json({ message: "Invalid user data" })
-            throw new Error('Invalid user data')
+            const err: any = new Error('Invalid user data')
+            err.status = 400;
+            throw err;
         }
     }
 
-    async login(email: string, password: string): Promise<{ user: Partial<IUser>; token: string; }> {
-        if (!email.trim() || !password.trim()) {
-            throw new Error("Email and Password are required")
+    async login(data: Partial<IUser>): Promise<{ user: Partial<IUser>; token: string; }> {
+        const email = data.email?.trim()
+        const password = data.password?.trim()
+
+        if (!email || !password) {
+            const err: any = new Error("Email and Password are required")
+            err.status = 400;
+            throw err;
         }
 
         const user = await this.userRepo.findByEmail(email);
         if (!user) {
-            throw new Error("Invalid credentials")
+            const err: any = new Error("Invalid credentials")
+            err.status = 400;
+            throw err;
         }
 
         const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
         if (!isPasswordCorrect) {
-            throw new Error("Inavalid credentials")
+            const err: any = new Error("Inavalid credentials")
+            err.status = 400;
+            throw err;
         }
 
         const token = generateToken(user._id);
@@ -91,11 +100,8 @@ export default class AuthService implements IAuthService {
             avatar: user.avatar,
         }
 
-
         return { user: userData, token }
     }
 
-    async logout(id: string): Promise<void> {
-
-    }
+    async logout(id: string): Promise<void> { }
 }

@@ -19,7 +19,7 @@ export default class BaseRepo<T extends Document> implements IBaseRepo<T>{
     }
 
     async findByQuery(query:Partial<T>): Promise<T[]> {
-        return await this.model.find(query);
+        return await this.model.find({query});
     }
 
     async updateById(id:string, newData:Partial<T>): Promise<T | null> {

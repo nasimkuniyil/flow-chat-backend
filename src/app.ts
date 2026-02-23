@@ -20,8 +20,3 @@ connectDB()
         console.error('Failed to connect mongodb : ', error);
         process.exit(1);
     })
-
-// app.listen(PORT, () => {
-//     console.log('server started at ' + PORT);
-//     connectDB();
-// });

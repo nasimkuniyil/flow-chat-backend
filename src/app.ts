@@ -1,9 +1,9 @@
 import 'dotenv/config';
 import express from 'express';
 
-import authRoutes from './routes/auth.route'
-import messageRoutes from './routes/message.route'
-import { connectDB } from './lib/db';
+import authRoutes from './modules/auth/auth.route'
+import messageRoutes from './modules/message/message.route'
+import { connectDB } from './config/db';
 
 const app = express();
 
@@ -20,8 +20,3 @@ connectDB()
         console.error('Failed to connect mongodb : ', error);
         process.exit(1);
     })
-
-// app.listen(PORT, () => {
-//     console.log('server started at ' + PORT);
-//     connectDB();
-// });

@@ -117,22 +117,25 @@ export default class AuthService implements IAuthService {
     }
 
     async updateAvatar(req: Request): Promise<void> {
+        
+        if (!req?.user) {
+            const err: any = new Error("user is missing")
+            err.status = 400;
+            throw err;
+        }
+
         const { avatar } = req.body;
-        if (avatar) {
+
+        if (!avatar) {
             const err: any = new Error("Profile pic is required");
             err.status = 400;
             throw err;
         }
 
-        if(!req.user){
-            const err:any = new Error("user is missing")
-            err.status = 400;
-            throw err;
-        }
 
         const userId = req.user._id;
         const uploadRes = await cloudinary.uploader.upload(avatar);
-        const updatedUser = await this.userRepo.updateById(userId,  {avatar:uploadRes.secure_url})
-        console.log("avatar updated : ",updatedUser);
+        const updatedUser = await this.userRepo.updateById(userId, { avatar: uploadRes.secure_url })
+        console.log("avatar updated : ", updatedUser);
     }
 }

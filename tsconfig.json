@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "typeRoots": ["./src/types", "./node_modules/@types"],
     "module": "commonjs",
     "target": "esnext",
     "rootDir": "src",
@@ -7,5 +8,6 @@
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true
-  }
+  },
+  "include": ["src/**/*.ts"]
 }

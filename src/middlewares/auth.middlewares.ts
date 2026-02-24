@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import userRepo from "../modules/user/user.repo";
 import { IUserRepo } from "../interfaces/repositories/IUserRepo";
 
 export default class AuthMiddleware {
@@ -26,7 +25,7 @@ export default class AuthMiddleware {
             }
             console.log('decoded : ', decoded)
 
-            const user = await userRepo.findById(decoded?.userId);
+            const user = await this.userRepo.findByIdSecure(decoded?.userId);
             if (!user) {
                 const err: any = new Error("User not found");
                 err.status = 404;

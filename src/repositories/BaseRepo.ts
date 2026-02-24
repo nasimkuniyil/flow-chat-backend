@@ -14,7 +14,7 @@ export default class BaseRepo<T extends Document> implements IBaseRepo<T> {
         return await this.model.find();
     }
 
-    async findById(id: string): Promise<T | null> {
+    async findById(id: Types.ObjectId | string): Promise<T | null> {
         return await this.model.findById(id);
     }
 
@@ -22,11 +22,11 @@ export default class BaseRepo<T extends Document> implements IBaseRepo<T> {
         return await this.model.find({ query });
     }
 
-    async updateById(id: Types.ObjectId, newData: Partial<T>): Promise<T | null> {
+    async updateById(id: Types.ObjectId | string, newData: Partial<T>): Promise<T | null> {
         return await this.model.findByIdAndUpdate(id, newData, { new: true })
     }
 
-    async deleteById(id: string): Promise<T | null> {
+    async deleteById(id: Types.ObjectId | string): Promise<T | null> {
         return await this.model.findByIdAndDelete(id);
     }
 }

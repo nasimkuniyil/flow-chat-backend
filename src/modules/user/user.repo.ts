@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { IUser } from "../../interfaces/common.interfaces";
 import { IUserRepo } from "../../interfaces/repositories/IUserRepo";
 
@@ -11,6 +12,10 @@ class UserRepo extends BaseRepo<IUser> implements IUserRepo {
 
     async findByEmail(email: string): Promise<IUser | null> {
         return await this.model.findOne({ email }); 
+    }
+
+    async findByIdSecure(id: string | Types.ObjectId): Promise<IUser | null> {
+        return await this.model.findById(id).select('-password')
     }
 }
 

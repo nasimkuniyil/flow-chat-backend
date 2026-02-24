@@ -3,6 +3,8 @@ import { IUser } from "../../interfaces/common.interfaces";
 import { IAuthService } from "../../interfaces/service/IAuthService";
 import { IUserRepo } from "../../interfaces/repositories/IUserRepo";
 import { generateToken } from '../../utils/jwt';
+import { Request, Response } from 'express';
+import cloudinary from '../../config/cloudinary';
 
 export default class AuthService implements IAuthService {
 
@@ -103,5 +105,37 @@ export default class AuthService implements IAuthService {
         return { user: userData, token }
     }
 
-    async logout(id: string): Promise<void> { }
+    async logout(res: Response): Promise<void> {
+        const cookieOptions = {
+            httpOnly: true,
+            // sameSite: "strict",
+            secure: process.env.NODE_ENV !== "development"
+        }
+
+        res.clearCookie("jwt", cookieOptions);
+        res.status(200).json({ message: "Logged out successfully" })
+    }
+
+    async updateAvatar(req: Request): Promise<void> {
+        
+        if (!req?.user) {
+            const err: any = new Error("user is missing")
+            err.status = 400;
+            throw err;
+        }
+
+        const { avatar } = req.body;
+
+        if (!avatar) {
+            const err: any = new Error("Profile pic is required");
+            err.status = 400;
+            throw err;
+        }
+
+
+        const userId = req.user._id;
+        const uploadRes = await cloudinary.uploader.upload(avatar);
+        const updatedUser = await this.userRepo.updateById(userId, { avatar: uploadRes.secure_url })
+        console.log("avatar updated : ", updatedUser);
+    }
 }

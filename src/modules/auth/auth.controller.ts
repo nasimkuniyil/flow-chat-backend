@@ -42,16 +42,19 @@ export default class AuthController implements IAuthController {
 
     async logout(req: Request, res: Response): Promise<void> {
         try {
-            const cookieOptions = {
-                httpOnly: true,
-                // sameSite: "strict",
-                secure: process.env.NODE_ENV !== "development"
-            }
-
-            res.clearCookie("jwt", cookieOptions);
-            res.status(200).json({ message: "Logged out successfully" })
+            this.authService.logout(res)
         } catch (error: any) {
             console.error("auth.controller - LOGOUT error: ", error);
+            res.status(error.status || 500).json({ message: error.message || "server error" })
+        }
+    }
+    
+    async updateAvatar(req: Request, res: Response): Promise<void> {
+        try {
+            this.authService.updateAvatar(req)
+            
+        } catch (error:any) {
+            console.error("auth.controller - UPDATEAVATAR error: ", error);
             res.status(error.status || 500).json({ message: error.message || "server error" })
         }
     }

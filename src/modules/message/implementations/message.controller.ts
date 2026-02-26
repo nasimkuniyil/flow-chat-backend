@@ -24,5 +24,6 @@ export default class MessageController implements IMessageController {
         if (!id) throw new Error("id not available")
         const messages = await this.messageService.getMessagesByUserId(userId, id)
         console.log("messages : ", messages);
+        res.status(200).json({messages})
     }
 }

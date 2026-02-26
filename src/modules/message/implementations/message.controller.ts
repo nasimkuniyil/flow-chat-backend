@@ -8,7 +8,11 @@ export default class MessageController implements IMessageController {
 
     async getAllContacts(req: Request, res: Response): Promise<void> {
         const userId = req.user?._id;
-        if (!userId) throw new Error("Unauthorized")
+        if (!userId) {
+            const err: any = new Error("User is missing");
+            err.status = 400;
+            throw err;
+        }
         const contacts = await this.messageService.getAllContacts(userId);
         res.status(200).json({ contacts });
     }
@@ -18,6 +22,7 @@ export default class MessageController implements IMessageController {
         if (!userId) throw new Error("Unauthorized")
         const { id } = req.params as { id: string };
         if (!id) throw new Error("id not available")
-        await this.messageService.getMessagesByUserId(userId, id)
+        const messages = await this.messageService.getMessagesByUserId(userId, id)
+        console.log("messages : ", messages);
     }
 }

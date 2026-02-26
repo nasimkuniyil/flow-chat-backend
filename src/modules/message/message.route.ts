@@ -12,7 +12,7 @@ const messageController = new MessageController(messageService);
 const router = express.Router();
 
 router.get('/contacts', (req: Request, res: Response, next:NextFunction)=>authMiddleware.protect(req,res,next), (req:Request, res:Response)=> messageController.getAllContacts(req, res))
-router.get('/:id', (req: Request, res: Response, next:NextFunction)=>authMiddleware.protect(req,res,next), (req:Request, res:Response)=> messageController.getAllContacts(req, res))
+router.get('/:id', (req: Request, res: Response, next:NextFunction)=>authMiddleware.protect(req,res,next), (req:Request, res:Response)=> messageController.getMessagesByUserId(req, res))
 
 
 router.get('/send', (req, res) => {

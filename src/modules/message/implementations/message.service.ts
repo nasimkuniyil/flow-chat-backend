@@ -15,12 +15,6 @@ export default class MessageService implements IMessageSevice {
     }
 
     async getAllContacts(userId: Types.ObjectId | string): Promise<IUser[]> {
-        if (!userId) {
-            const err: any = new Error("User is missing");
-            err.status = 400;
-            throw err;
-        }
-
         return await this._userRepo.findAllUsers(userId);
     }
 

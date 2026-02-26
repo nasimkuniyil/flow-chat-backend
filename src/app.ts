@@ -14,7 +14,7 @@ app.use(express.json()); //req.body
 app.use(cookieParser())
 
 app.use('/api/auth', authRoutes);
-app.use('/api/messages ', messageRoutes);
+app.use('/api/message', messageRoutes);
 
 connectDB()
     .then(() => app.listen(PORT, () => console.log('server started at ' + PORT)))

@@ -1,8 +1,7 @@
-import { type Response } from 'express'
 import jwt from 'jsonwebtoken';
 import { Types } from 'mongoose';
 
-export const generateToken = (userId: Types.ObjectId) => {
+export const generateToken = (userId: Types.ObjectId | string) => {
     const { JWT_SECRET } = process.env;
     if (!JWT_SECRET) {
         throw new Error("JWT_SECRET is not configured  ");

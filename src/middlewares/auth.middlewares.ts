@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { IUserRepo } from "../interfaces/repositories/IUserRepo";
+import { IUserRepo } from "../modules/user/interfaces/IUserRepo";
 
 export default class AuthMiddleware {
 

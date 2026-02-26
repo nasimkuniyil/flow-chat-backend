@@ -24,6 +24,16 @@ export default class MessageController implements IMessageController {
         if (!id) throw new Error("id not available")
         const messages = await this.messageService.getMessagesByUserId(userId, id)
         console.log("messages : ", messages);
-        res.status(200).json({messages})
+        res.status(200).json({ messages })
+    }
+
+    async sendMessage(req: Request, res: Response): Promise<void> {
+        const senderId = req.user?._id;
+        if (!senderId) throw new Error("user not found")
+        const { id: recieverId } = req.params as { id: string };
+        if (!recieverId) throw new Error("reciver not found")
+        const data = req.body;
+        const newMessage = await this.messageService.sendMessage(senderId, recieverId, data);
+        res.status(201).json({newMessage})
     }
 }

@@ -1,6 +1,9 @@
 import { Request, Response } from "express";
 import IMessageController from "../interfaces/IMessageController";
 import IMessageSevice from "../interfaces/IMessageService";
+import { AppError } from "../../../utils/appError.util";
+import { HttpResponse } from "../../../constants/HttpResponse";
+import { HttpStatus } from "../../../constants/HttpStatus";
 
 export default class MessageController implements IMessageController {
 
@@ -8,32 +11,49 @@ export default class MessageController implements IMessageController {
 
     async getAllContacts(req: Request, res: Response): Promise<void> {
         const userId = req.user?._id;
-        if (!userId) {
-            const err: any = new Error("User is missing");
-            err.status = 400;
-            throw err;
-        }
+        if (!userId) throw new AppError(
+            HttpResponse.UNAUTHORIZED,
+            HttpStatus.UNAUTHORIZED
+        );
+
         const contacts = await this.messageService.getAllContacts(userId);
-        res.status(200).json({ contacts });
+        res.status(HttpStatus.OK).json({ contacts });
     }
 
     async getMessagesByUserId(req: Request, res: Response): Promise<void> {
         const userId = req.user?._id;
-        if (!userId) throw new Error("Unauthorized")
+        if (!userId) throw new AppError(
+            HttpResponse.UNAUTHORIZED,
+            HttpStatus.UNAUTHORIZED
+        );
+
         const { id } = req.params as { id: string };
-        if (!id) throw new Error("id not available")
+        if (!id) throw new AppError(
+            HttpResponse.INVALID_ID,
+            HttpStatus.BAD_REQUEST
+        );
+
         const messages = await this.messageService.getMessagesByUserId(userId, id)
-        console.log("messages : ", messages);
-        res.status(200).json({ messages })
+
+        res.status(HttpStatus.OK).json({ messages })
     }
 
     async sendMessage(req: Request, res: Response): Promise<void> {
         const senderId = req.user?._id;
-        if (!senderId) throw new Error("user not found")
+        if (!senderId) throw new AppError(
+            HttpResponse.UNAUTHORIZED,
+            HttpStatus.UNAUTHORIZED
+        );
+
         const { id: recieverId } = req.params as { id: string };
-        if (!recieverId) throw new Error("reciver not found")
+        if (!recieverId) throw new AppError(
+            HttpResponse.INVALID_ID,
+            HttpStatus.BAD_REQUEST
+        );
+
         const data = req.body;
         const newMessage = await this.messageService.sendMessage(senderId, recieverId, data);
-        res.status(201).json({newMessage})
+        
+        res.status(HttpStatus.CREATED).json({ newMessage })
     }
 }

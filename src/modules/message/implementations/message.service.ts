@@ -25,8 +25,6 @@ export default class MessageService implements IMessageSevice {
 
     async sendMessage(senderId: Types.ObjectId | string, recieverId: Types.ObjectId | string, data: any): Promise<IMessage> {
 
-        if (!data) throw new Error("data is empty")
-
         let imageUrl;
         if (data?.image) {
             const uploadRes = await cloudinary.uploader.upload(data.image);

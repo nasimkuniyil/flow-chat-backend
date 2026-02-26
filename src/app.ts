@@ -5,6 +5,7 @@ import authRoutes from './modules/auth/auth.route'
 import messageRoutes from './modules/message/message.route'
 import { connectDB } from './config/db';
 import cookieParser from 'cookie-parser';
+import errMiddleware from './middlewares/err.middleware';
 
 const app = express();
 
@@ -15,6 +16,8 @@ app.use(cookieParser())
 
 app.use('/api/auth', authRoutes);
 app.use('/api/message', messageRoutes);
+
+app.use(errMiddleware);
 
 connectDB()
     .then(() => app.listen(PORT, () => console.log('server started at ' + PORT)))

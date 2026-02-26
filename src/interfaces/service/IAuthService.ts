@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { IUser } from "../common.interfaces"
+import { IUser } from "../../modules/user/user.model";
 
 export interface IAuthService {
     register(data: Partial<IUser>): Promise<{ user: Partial<IUser>, token: string }>

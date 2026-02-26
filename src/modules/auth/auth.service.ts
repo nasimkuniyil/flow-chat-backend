@@ -1,10 +1,10 @@
 import bcrypt from 'bcryptjs';
-import { IUser } from "../../interfaces/common.interfaces";
 import { IAuthService } from "../../interfaces/service/IAuthService";
 import { IUserRepo } from "../../interfaces/repositories/IUserRepo";
 import { generateToken } from '../../utils/jwt';
 import { Request, Response } from 'express';
 import cloudinary from '../../config/cloudinary';
+import { IUser } from '../user/user.model';
 
 export default class AuthService implements IAuthService {
 

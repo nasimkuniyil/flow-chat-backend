@@ -1,8 +1,7 @@
 import { Types } from "mongoose";
-import { IUserRepo } from "../../interfaces/repositories/IUserRepo";
-
-import BaseRepo from "../../repositories/BaseRepo";
-import User, { IUser } from "./user.model";
+import User, { IUser } from "../user.model";
+import BaseRepo from "../../../repositories/BaseRepo";
+import { IUserRepo } from "../interfaces/IUserRepo";
 
 class UserRepo extends BaseRepo<IUser> implements IUserRepo {
     constructor() {
@@ -13,10 +12,10 @@ class UserRepo extends BaseRepo<IUser> implements IUserRepo {
         return await this.model.findOne({ email });
     }
 
-    async findByIdSecure(id: string | Types.ObjectId): Promise<IUser | null> {
+    async findByIdSecure(id: Types.ObjectId | string): Promise<IUser | null> {
         return await this.model.findById(id).select('-password')
     }
-    async findAllUsers(id: string | Types.ObjectId): Promise<IUser[]> {
+    async findAllUsers(id: Types.ObjectId | string): Promise<IUser[]> {
         return await this.model.find({ _id: { $ne: id } }).select('-password')
     }
 }

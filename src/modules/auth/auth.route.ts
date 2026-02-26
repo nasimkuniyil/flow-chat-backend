@@ -1,8 +1,9 @@
 import express, { NextFunction, Request, Response } from "express";
-import AuthController from "./auth.controller";
-import AuthService from "./auth.service";
-import userRepo from "../user/user.repo";
 import AuthMiddleware from "../../middlewares/auth.middlewares";
+import userRepo from "../user/implementations/user.repo";
+import AuthService from "./implementations/auth.service";
+import AuthController from "./implementations/auth.controller";
+
 
 const router = express.Router();
 

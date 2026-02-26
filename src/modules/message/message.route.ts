@@ -1,9 +1,9 @@
 import express, { NextFunction, Request, Response } from 'express';
 import AuthMiddleware from '../../middlewares/auth.middlewares';
-import userRepo from '../user/user.repo';
-import MessageService from './message.service';
-import messageRepo from './message.repo';
-import MessageController from './message.controller';
+import userRepo from '../user/implementations/user.repo';
+import messageRepo from './implementations/message.repo';
+import MessageService from './implementations/message.service';
+import MessageController from './implementations/message.controller';
 
 const authMiddleware = new AuthMiddleware(userRepo);
 const messageService = new MessageService(messageRepo, userRepo);

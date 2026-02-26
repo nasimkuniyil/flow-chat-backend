@@ -1,20 +1,20 @@
 import { Document, model, Model, Schema } from "mongoose";
 
 export interface IMessage extends Document{
-    senderId:Schema.Types.ObjectId;
-    recieverId:Schema.Types.ObjectId;
+    senderId:Schema.Types.ObjectId | string;
+    recieverId:Schema.Types.ObjectId | string;
     text:string;
     image:string;
 }
 
 const messageSchema = new Schema<IMessage>({
     senderId:{
-        type:Schema.Types.ObjectId,
+        type:Schema.Types.ObjectId | string,
         ref:"User",
         required:true
     },
     recieverId:{
-        type:Schema.Types.ObjectId,
+        type:Schema.Types.ObjectId | string,
         ref:"User",
         required:true
     },
@@ -26,6 +26,6 @@ const messageSchema = new Schema<IMessage>({
     }
 }, {timestamps:true});
 
-const Message:Model<IMessage> = model("Message", messageSchema);
+const Message:Model<IMessage> = model<IMessage>("Message", messageSchema);
 
 export default Message;

@@ -5,6 +5,9 @@ import { IUser } from "../../user/user.model";
 import { IMessage } from "../message.model";
 import { Types } from "mongoose";
 import cloudinary from "../../../config/cloudinary";
+import { HttpResponse } from "../../../constants/HttpResponse";
+import { HttpStatus } from "../../../constants/HttpStatus";
+import { AppError } from "../../../utils/appError.util";
 
 export default class MessageService implements IMessageSevice {
     private _messageRepo: IMessageRepo;
@@ -33,6 +36,13 @@ export default class MessageService implements IMessageSevice {
     }
 
     async sendMessage(senderId: Types.ObjectId | string, recieverId: Types.ObjectId | string, data: any): Promise<IMessage> {
+
+        const recieverIdExists = await this._userRepo.isUserExists(recieverId);
+
+        if (!recieverIdExists) throw new AppError(
+                    HttpResponse.USER_NOT_FOUND,
+                    HttpStatus.NOT_FOUND
+                );
 
         let imageUrl;
         if (data?.image) {

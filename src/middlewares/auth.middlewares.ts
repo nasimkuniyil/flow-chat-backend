@@ -1,6 +1,9 @@
 import { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import { IUserRepo } from "../modules/user/interfaces/IUserRepo";
+import { AppError } from "../utils/appError.util";
+import { HttpStatus } from "../constants/HttpStatus";
+import { HttpResponse } from "../constants/HttpResponse";
 
 export default class AuthMiddleware {
 
@@ -11,25 +14,28 @@ export default class AuthMiddleware {
             const token = req.cookies.jwt;
 
             if (!token) {
-                const err: any = new Error("Unauthorized - No token provided");
-                err.status = 401;
-                throw err;
+                throw new AppError(
+                    HttpResponse.NO_TOKEN,
+                    HttpStatus.UNAUTHORIZED
+                );
             }
 
             const decoded: any = jwt.verify(token, process.env.JWT_SECRET as string);
 
             if (!decoded) {
-                const err: any = new Error("Unauthorized - Invalid token");
-                err.status = 401;
-                throw err;
+                throw new AppError(
+                    HttpResponse.TOKEN_EXPIRED,
+                    HttpStatus.UNAUTHORIZED
+                );
             }
             console.log('decoded : ', decoded)
 
             const user = await this.userRepo.findByIdSecure(decoded?.userId);
             if (!user) {
-                const err: any = new Error("User not found");
-                err.status = 404;
-                throw err;
+                throw new AppError(
+                    HttpResponse.USER_NOT_FOUND,
+                    HttpStatus.NOT_FOUND
+                );
             }
 
             req.user = user;
@@ -37,7 +43,7 @@ export default class AuthMiddleware {
             next();
         } catch (error: any) {
             console.error("protectRoute Error :", error);
-            res.status(error.status || 500).json({ message: error.message || 'server error' })
+            res.status(error.status || HttpStatus.INTERNAL_SERVER_ERROR).json({ message: error.message || HttpResponse.SERVER_ERROR })
         }
     }
 }

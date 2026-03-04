@@ -20,8 +20,12 @@ class UserRepo extends BaseRepo<IUser> implements IUserRepo {
         return await this.model.find({ _id: { $ne: id } }).select('-password');
     }
 
-    async findChatPartners(chatPartnerIds: string[]):Promise<IUser[]>{
-        return await this.model.find({_id:{$in:chatPartnerIds}}).select("-password");
+    async findChatPartners(chatPartnerIds: string[]): Promise<IUser[]> {
+        return await this.model.find({ _id: { $in: chatPartnerIds } }).select("-password");
+    }
+
+    async isUserExists(id: Types.ObjectId | string): Promise<{ _id: Types.ObjectId } | null> {
+        return await this.model.exists({ _id: id });
     }
 }
 

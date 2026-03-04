@@ -62,7 +62,12 @@ export default class MessageController implements IMessageController {
             HttpStatus.BAD_REQUEST
         );
 
-        const data = req.body;
+        const data = req.body as {text?:string, image?:string};
+        if (!data.text && !data.image) throw new AppError(
+            HttpResponse.BAD_REQUEST,
+            HttpStatus.BAD_REQUEST
+        );
+        
         const newMessage = await this.messageService.sendMessage(senderId, recieverId, data);
 
         res.status(HttpStatus.CREATED).json({ newMessage })

@@ -1,10 +1,14 @@
 import bcrypt from 'bcryptjs';
-import { IUser } from "../../interfaces/common.interfaces";
-import { IAuthService } from "../../interfaces/service/IAuthService";
-import { IUserRepo } from "../../interfaces/repositories/IUserRepo";
-import { generateToken } from '../../utils/jwt';
+import { IAuthService } from "../interfaces/IAuthService";
+import { IUserRepo } from '../../user/interfaces/IUserRepo';
+import { generateToken } from '../../../utils/jwt';
 import { Request, Response } from 'express';
-import cloudinary from '../../config/cloudinary';
+import cloudinary from '../../../config/cloudinary';
+import { IUser } from '../../user/user.model';
+import { Types } from 'mongoose';
+import { AppError } from '../../../utils/appError.util';
+import { HttpStatus } from '../../../constants/HttpStatus';
+import { HttpResponse } from '../../../constants/HttpResponse';
 
 export default class AuthService implements IAuthService {
 
@@ -17,29 +21,33 @@ export default class AuthService implements IAuthService {
         const password = data.password?.trim();
 
         if (!fullName || !email || !password) {
-            const err: any = new Error("All fields are required");
-            err.status = 400;
-            throw err;
+            throw new AppError(
+                HttpResponse.MISSING_REQUIRED_FIELDS,
+                HttpStatus.BAD_REQUEST
+            );
         }
 
         if (password.length < 6) {
-            const err: any = new Error("Password must be at least 6 characters")
-            err.status = 400;
-            throw err;
+            throw new AppError(
+                HttpResponse.PASSWORD_TOO_SHORT,
+                HttpStatus.BAD_REQUEST
+            );
         }
 
         const emailPattern = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
         if (!emailPattern.test(email)) {
-            const err: any = new Error("Invalid email")
-            err.status = 400;
-            throw err;
+            throw new AppError(
+                HttpResponse.INVALID_EMAIL,
+                HttpStatus.BAD_REQUEST
+            );
         }
 
         const user = await this.userRepo.findByEmail(email);
         if (user) {
-            const err: any = new Error("Email already exists")
-            err.status = 400;
-            throw err;
+            throw new AppError(
+                HttpResponse.EMAIL_ALREADY_EXISTS,
+                HttpStatus.BAD_REQUEST
+            );
         }
 
         const salt = await bcrypt.genSalt(10);
@@ -63,9 +71,10 @@ export default class AuthService implements IAuthService {
 
             return { user: userData, token }
         } else {
-            const err: any = new Error('Invalid user data')
-            err.status = 400;
-            throw err;
+            throw new AppError(
+                HttpResponse.INVALID_USER_DATA,
+                HttpStatus.BAD_REQUEST
+            );
         }
     }
 
@@ -74,24 +83,27 @@ export default class AuthService implements IAuthService {
         const password = data.password?.trim()
 
         if (!email || !password) {
-            const err: any = new Error("Email and Password are required")
-            err.status = 400;
-            throw err;
+            throw new AppError(
+                HttpResponse.MISSING_REQUIRED_FIELDS,
+                HttpStatus.BAD_REQUEST
+            );
         }
 
         const user = await this.userRepo.findByEmail(email);
         if (!user) {
-            const err: any = new Error("Invalid credentials")
-            err.status = 400;
-            throw err;
+            throw new AppError(
+                HttpResponse.INVALID_CREDENTIALS,
+                HttpStatus.BAD_REQUEST
+            );
         }
 
         const isPasswordCorrect = await bcrypt.compare(password, user.password);
 
         if (!isPasswordCorrect) {
-            const err: any = new Error("Inavalid credentials")
-            err.status = 400;
-            throw err;
+            throw new AppError(
+                HttpResponse.INVALID_CREDENTIALS,
+                HttpStatus.BAD_REQUEST
+            );
         }
 
         const token = generateToken(user._id);
@@ -105,35 +117,9 @@ export default class AuthService implements IAuthService {
         return { user: userData, token }
     }
 
-    async logout(res: Response): Promise<void> {
-        const cookieOptions = {
-            httpOnly: true,
-            // sameSite: "strict",
-            secure: process.env.NODE_ENV !== "development"
-        }
+    async logout(): Promise<void> { }
 
-        res.clearCookie("jwt", cookieOptions);
-        res.status(200).json({ message: "Logged out successfully" })
-    }
-
-    async updateAvatar(req: Request): Promise<void> {
-        
-        if (!req?.user) {
-            const err: any = new Error("user is missing")
-            err.status = 400;
-            throw err;
-        }
-
-        const { avatar } = req.body;
-
-        if (!avatar) {
-            const err: any = new Error("Profile pic is required");
-            err.status = 400;
-            throw err;
-        }
-
-
-        const userId = req.user._id;
+    async updateAvatar(userId: Types.ObjectId | string, avatar: string): Promise<void> {
         const uploadRes = await cloudinary.uploader.upload(avatar);
         const updatedUser = await this.userRepo.updateById(userId, { avatar: uploadRes.secure_url })
         console.log("avatar updated : ", updatedUser);

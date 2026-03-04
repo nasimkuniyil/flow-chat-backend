@@ -20,6 +20,8 @@ const messageSchema = new Schema<IMessage>({
     },
     text: {
         type: String,
+        maxlength: 200,
+        trim: true
     },
     image: {
         type: String

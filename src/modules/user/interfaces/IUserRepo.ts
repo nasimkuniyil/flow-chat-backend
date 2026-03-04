@@ -6,4 +6,5 @@ export interface IUserRepo extends IBaseRepo<IUser> {
     findByEmail(email: string): Promise<IUser | null>
     findByIdSecure(id: Types.ObjectId | string): Promise<IUser | null>
     findAllUsers(id: Types.ObjectId | string): Promise<IUser[]>
+    findChatPartners(chatPartnerIds: string[]):Promise<IUser[]>
 }

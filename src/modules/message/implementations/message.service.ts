@@ -23,6 +23,15 @@ export default class MessageService implements IMessageSevice {
         return await this._messageRepo.getMessagesByUserId(userId, userToChatId);
     }
 
+    async getChatPartner(userId: Types.ObjectId | string): Promise<IUser[]> {
+        const allMessages = await this._messageRepo.getAllUserMessages(userId);
+        const chatPartnerIds = [...new Set(allMessages.map(({ senderId, recieverId }) => (senderId.toString() == userId.toString()) ? recieverId.toString() : senderId.toString()))]
+        const chatPartners = await this._userRepo.findChatPartners(chatPartnerIds);
+
+        console.log(chatPartners);
+        return chatPartners;
+    }
+
     async sendMessage(senderId: Types.ObjectId | string, recieverId: Types.ObjectId | string, data: any): Promise<IMessage> {
 
         let imageUrl;

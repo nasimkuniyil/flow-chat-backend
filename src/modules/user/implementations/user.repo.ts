@@ -13,10 +13,15 @@ class UserRepo extends BaseRepo<IUser> implements IUserRepo {
     }
 
     async findByIdSecure(id: Types.ObjectId | string): Promise<IUser | null> {
-        return await this.model.findById(id).select('-password')
+        return await this.model.findById(id).select('-password');
     }
+
     async findAllUsers(id: Types.ObjectId | string): Promise<IUser[]> {
-        return await this.model.find({ _id: { $ne: id } }).select('-password')
+        return await this.model.find({ _id: { $ne: id } }).select('-password');
+    }
+
+    async findChatPartners(chatPartnerIds: string[]):Promise<IUser[]>{
+        return await this.model.find({_id:{$in:chatPartnerIds}}).select("-password");
     }
 }
 

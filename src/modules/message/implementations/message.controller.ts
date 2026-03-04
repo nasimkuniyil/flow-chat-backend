@@ -38,6 +38,17 @@ export default class MessageController implements IMessageController {
         res.status(HttpStatus.OK).json({ messages })
     }
 
+    async getChatPartner(req: Request, res: Response): Promise<void> {
+        const userId = req.user?._id;
+        if (!userId) throw new AppError(
+            HttpResponse.UNAUTHORIZED,
+            HttpStatus.UNAUTHORIZED
+        );
+
+        const chatPartners = await this.messageService.getChatPartner(userId);
+        res.status(HttpStatus.OK).json({ chatPartners })
+    }
+
     async sendMessage(req: Request, res: Response): Promise<void> {
         const senderId = req.user?._id;
         if (!senderId) throw new AppError(
@@ -53,7 +64,7 @@ export default class MessageController implements IMessageController {
 
         const data = req.body;
         const newMessage = await this.messageService.sendMessage(senderId, recieverId, data);
-        
+
         res.status(HttpStatus.CREATED).json({ newMessage })
     }
 }

@@ -17,6 +17,12 @@ class MessageRepo extends BaseRepo<IMessage> implements IMessageRepo {
 
         return await this.model.find(filter).sort({ createdAt: -1 }).limit(10)
     }
+
+
+    async getAllUserMessages(userId: Types.ObjectId | string): Promise<IMessage[]> {
+        const filter = { $or: [{ senderId: userId }, { recieverId: userId }] } as any
+        return await this.model.find(filter);
+    }
 }
 
 export default new MessageRepo();
